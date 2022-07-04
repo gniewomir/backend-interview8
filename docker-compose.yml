@@ -1,0 +1,86 @@
+version: '3.7'
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '12m'
+    max-file: '5'
+  driver: json-file
+
+services:
+  mysql:
+    image: mysql:8.0
+    logging: *default-logging
+    restart: always
+    volumes:
+      - "./.docker/mysql:/docker-entrypoint-initdb.d"
+    environment:
+      MYSQL_USER: primarybyte
+      MYSQL_PASSWORD: primarybyte
+      MYSQL_DATABASE: primarybyte
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 127.0.0.1:3306:3306
+
+  rabbit:
+    image: rabbitmq:3.8-management-alpine
+    logging: *default-logging
+    restart: always
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 123456
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - 127.0.0.1:15673:15672
+
+  redis:
+    image: redis:5-alpine
+    logging: *default-logging
+    restart: always
+
+  php: &php
+    build:
+      context: ./.docker/php
+    logging: *default-logging
+    restart: always
+    depends_on:
+      - mysql
+      - rabbit
+      - redis
+    volumes:
+      - ".:/app"
+    working_dir: /app
+    environment:
+      TERM: "xterm-256color"
+    tty: true
+    command: sh -c "
+        composer install
+      && bin/console d:m:m --allow-no-migration --no-interaction
+      && touch ./vendor/.installed
+      && php-fpm -D
+      && vendor/bin/var-dump-server -n --host=0.0.0.0:9912
+      "
+
+  events_consumer:
+    <<: *php
+    depends_on:
+      - rabbit
+      - php
+      - mysql
+      - redis
+    command: sh -c "bash ./wait_for_file.sh ./vendor/.installed php ./bin/console messenger:consume async -vv"
+
+  app:
+    image: nginx:alpine
+    logging: *default-logging
+    restart: always
+    volumes:
+        - .:/app
+        - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      TERM: "xterm-256color"
+    tty: true
+    depends_on:
+      - php
+    ports:
+      - "127.0.0.1:80:80"
