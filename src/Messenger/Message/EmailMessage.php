@@ -4,5 +4,13 @@ namespace App\Messenger\Message;
 
 class EmailMessage
 {
-    public int $id;
+    public function __construct(private readonly int $id)
+    {
+
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
 }

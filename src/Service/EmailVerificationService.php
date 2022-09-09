@@ -23,7 +23,7 @@ class EmailVerificationService
         $this->entityManager = $entityManager;
     }
 
-    public function verify(Email $email)
+    public function verify(Email $email): void
     {
         $result = $this->client->verify($email->getEmail());
         if ($result) {

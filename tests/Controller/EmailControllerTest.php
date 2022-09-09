@@ -89,7 +89,7 @@ class EmailControllerTest extends WebTestCase
         $this->messageBusMock->expects($this->once())->method('dispatch')
             ->will($this->returnCallback(function ($emailMessage) use ($fixture) : Envelope {
                 $this->assertEquals(EmailMessage::class, get_class($emailMessage));
-                $this->assertEquals($fixture->getId(), $emailMessage->id);
+                $this->assertEquals($fixture->getId(), $emailMessage->getId());
                 return new Envelope($emailMessage);
             }));
 
