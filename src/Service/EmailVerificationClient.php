@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\EmailVerificationClientInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -9,7 +10,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class EmailVerificationClient
+class EmailVerificationClient implements EmailVerificationClientInterface
 {
     private string $verifierUrl = 'email-verifier';
     private HttpClientInterface $httpClient;

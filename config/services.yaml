@@ -28,6 +28,9 @@ services:
     App\EmailVerificationServiceInterface:
         class: 'App\Service\EmailVerificationService'
 
+    App\EmailVerificationClientInterface:
+        class: 'App\Service\CachedEmailVerificationClient'
+
 when@test:
     services:
         App\Service\EmailVerificationClient:
@@ -35,3 +38,12 @@ when@test:
 
         Symfony\Component\Messenger\MessageBusInterface:
             public: true
+
+        EmailVerificationClient:
+            class: 'App\Service\EmailVerificationClient'
+            autowire: true
+
+        App\EmailVerificationClientInterface:
+            class: 'App\Service\CachedEmailVerificationClient'
+            public: true
+            autowire: true

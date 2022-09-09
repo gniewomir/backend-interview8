@@ -2,11 +2,11 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\EmailVerificationClientInterface;
 use App\Entity\Email;
 use App\Entity\EmailVerification;
 use App\Messenger\Message\EmailMessage;
 use App\Repository\EmailRepository;
-use App\Service\EmailVerificationClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,18 +20,18 @@ class EmailControllerTest extends WebTestCase
     private KernelBrowser $client;
     private EmailRepository $repository;
     private string $path = '/email-verification/';
-    private MockObject|EmailVerificationClient $emailVerificationClientMock;
+    private MockObject|EmailVerificationClientInterface $emailVerificationClientMock;
     private MockObject|MessageBusInterface $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->emailVerificationClientMock = $this->getMockBuilder(EmailVerificationClient::class)
+        $this->emailVerificationClientMock = $this->getMockBuilder(EmailVerificationClientInterface::class)
             ->disableOriginalConstructor()->getMock();
-        
+
         $this->messageBusMock = $this->getMockForAbstractClass(MessageBusInterface::class);
 
         $this->client = static::createClient();
-        static::getContainer()->set(EmailVerificationClient::class, $this->emailVerificationClientMock);
+        static::getContainer()->set(EmailVerificationClientInterface::class, $this->emailVerificationClientMock);
         static::getContainer()->set(MessageBusInterface::class, $this->messageBusMock);
         $this->repository = (static::getContainer()->get('doctrine'))->getRepository(Email::class);
 
