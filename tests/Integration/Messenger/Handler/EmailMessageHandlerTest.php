@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Messenger\Handler;
+namespace App\Tests\Integration\Messenger\Handler;
 
 use App\Entity\Email;
 use App\Messenger\Message\EmailMessage;
