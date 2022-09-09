@@ -2,16 +2,16 @@
 
 namespace App\Messenger\Handler;
 
+use App\EmailVerificationServiceInterface;
 use App\Messenger\Message\EmailMessage;
 use App\Repository\EmailRepository;
-use App\Service\EmailVerificationService;
 use RuntimeException;
 
 class EmailMessageHandler
 {
     public function __construct(
         private readonly EmailRepository $emailRepository,
-        private readonly EmailVerificationService $emailVerificationService,
+        private readonly EmailVerificationServiceInterface $emailVerificationService,
     )
     {
 

@@ -25,6 +25,9 @@ services:
         tags:
             - { name: messenger.message_handler, bus: messenger.bus.default }
 
+    App\EmailVerificationServiceInterface:
+        class: 'App\Service\EmailVerificationService'
+
 when@test:
     services:
         App\Service\EmailVerificationClient:

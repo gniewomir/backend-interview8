@@ -2,13 +2,14 @@
 
 namespace App\Service;
 
+use App\EmailVerificationServiceInterface;
 use App\Entity\Email;
 use App\Entity\EmailVerification;
 use App\Repository\EmailVerificationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
-class EmailVerificationService
+class EmailVerificationService implements EmailVerificationServiceInterface
 {
     private EmailVerificationRepository $repository;
     private EmailVerificationClient $client;
@@ -17,7 +18,8 @@ class EmailVerificationService
         EmailVerificationRepository $repository,
         EmailVerificationClient $client,
         EntityManagerInterface $entityManager,
-    ) {
+    )
+    {
         $this->repository = $repository;
         $this->client = $client;
         $this->entityManager = $entityManager;
@@ -36,8 +38,7 @@ class EmailVerificationService
                 ->setIsFreemail(boolval($result['freemail'] ?? false))
                 ->setIsPrivate(boolval($result['isPrivate'] ?? false))
                 ->setIsRolebased(boolval($result['rolebased'] ?? false))
-                ->setIsSmtpValid(boolval($result['smtpValid'] ?? false))
-            ;
+                ->setIsSmtpValid(boolval($result['smtpValid'] ?? false));
 
             $email->addEmailVerification($verification);
             $email->setLastVerifiedAt($verification->getCreatedAt());

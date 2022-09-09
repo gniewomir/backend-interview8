@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Messenger\Handler;
 
+use App\EmailVerificationServiceInterface;
 use App\Entity\Email;
 use App\Messenger\Handler\EmailMessageHandler;
 use App\Messenger\Message\EmailMessage;
 use App\Repository\EmailRepository;
-use App\Service\EmailVerificationService;
 use PHPUnit\Framework\TestCase;
 
 class EmailMessageHandlerTest extends TestCase
@@ -23,7 +23,7 @@ class EmailMessageHandlerTest extends TestCase
             ->willReturn($emailEntityId);
 
         $emailVerificationServiceMock = $this
-            ->getMockBuilder(EmailVerificationService::class)
+            ->getMockBuilder(EmailVerificationServiceInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $emailVerificationServiceMock
